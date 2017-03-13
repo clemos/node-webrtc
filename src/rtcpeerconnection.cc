@@ -32,6 +32,10 @@ static const char sRTCPeerConnection[] = "RTCPeerConnection";
 static const char kCreateOffer[] = "createOffer";
 static const char kGenerateCertificate[] = "generateCertificate";
 
+static const char kIceServers[] = "iceServers";
+static const char kIceServerUrls[] = "urls";
+static const char kCertificates[] = "certificates";
+
 static const char kName[] = "name";
 static const char kRSA[] = "RSASSA-PKCS1-v1_5";
 static const char kHash[] = "hash";
@@ -134,21 +138,41 @@ NAN_METHOD(RTCPeerConnection::New) {
   webrtc::FakeConstraints constraints;
   webrtc::PeerConnectionInterface::RTCConfiguration _config;
   webrtc::PeerConnectionInterface::IceServer server;
-  //server.uri = "stun:stun.l.google.com:19302";
-  //config.servers.push_back(server);
-
+  
   if (info.Length() > 0) {
     ASSERT_OBJECT_ARGUMENT(0, config);
 
-    DECLARE_OBJECT_PROPERTY(config, "iceServer", iceServerVal);
-    Local<Object> iceServer = iceServerVal->ToObject();
+    DECLARE_OBJECT_PROPERTY(config, kIceServers, iceServersVal);
+    ASSERT_PROPERTY_ARRAY(kIceServers, iceServersVal, iceServers);
 
-    DECLARE_OBJECT_PROPERTY(iceServer, "url", iceServerUrlVal);
-    ASSERT_PROPERTY_STRING("iceServer.url", iceServerUrlVal, iceServerUrl);
+    for(unsigned int i = 0; i < iceServers->Length(); i = i + 1) {
+      Local<Value> iceServerVal = iceServers->Get(i);
+      ASSERT_PROPERTY_OBJECT(kIceServers, iceServerVal, iceServer);
 
-    webrtc::PeerConnectionInterface::IceServer server;
-    server.uri = *iceServerUrl;
-    _config.servers.push_back(server);
+      webrtc::PeerConnectionInterface::IceServer server;
+
+      DECLARE_OBJECT_PROPERTY(iceServer, kIceServerUrls, iceServerUrlsVal);
+      ASSERT_PROPERTY_ARRAY(kIceServerUrls, iceServerUrlsVal, iceServerUrls);
+
+      for(unsigned int j = 0; j < iceServerUrls->Length(); j = j + 1) {
+        Local<Value> iceServerUrlVal = iceServerUrls->Get(j);
+        ASSERT_PROPERTY_STRING(kIceServerUrls, iceServerUrlVal, iceServerUrl);
+        server.urls.push_back(*iceServerUrl);
+      }
+
+      _config.servers.push_back(server);
+    }
+
+    DECLARE_OBJECT_PROPERTY(config, kCertificates, certificatesVal);
+    ASSERT_PROPERTY_ARRAY(kCertificates, certificatesVal, certificates);
+
+    for(unsigned int i = 0; i < certificates->Length(); i = i + 1) {
+      Local<Value> certificateVal = certificates->Get(i);
+      ASSERT_PROPERTY_OBJECT(kCertificates, certificateVal, certificate);
+      // FIXME: validate it's a RTCCertificate object
+      RTCCertificate* _certificate = Nan::ObjectWrap::Unwrap<RTCCertificate>(certificate);
+      _config.certificates.push_back(_certificate->_certificate);
+    }
   }
 
   constraints.AddOptional(webrtc::MediaConstraintsInterface::kEnableDtlsSrtp,
