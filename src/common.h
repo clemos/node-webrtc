@@ -44,6 +44,12 @@
 #define ERROR_PROPERTY_NOT_BOOLEAN(NAME) \
   "The '" << NAME << "' property is not a boolean."
 
+#define ERROR_PROPERTY_NOT_OBJECT(NAME) \
+  "The '" << NAME << "' property is not an object."
+
+#define ERROR_PROPERTY_NOT_ARRAY(NAME) \
+  "The '" << NAME << "' property is not an object."
+
 #define ERROR_PROPERTY_NOT_UINT8ARRAY(NAME) \
   "The '" << NAME << "' property is not a Uint8Array."
 
@@ -167,6 +173,23 @@
   } \
   \
   Local<Boolean> S(V->ToBoolean());
+
+#define ASSERT_PROPERTY_OBJECT(N, V, S) \
+  if (!V->IsObject()) { \
+    errorStream << ERROR_PROPERTY_NOT_OBJECT(N); \
+    return Nan::ThrowTypeError(errorStream.str().c_str()); \
+  } \
+  \
+  Local<Object> S(V->ToObject());
+
+#define ASSERT_PROPERTY_ARRAY(N, V, S) \
+  if (!V->IsArray()) { \
+    errorStream << ERROR_PROPERTY_NOT_ARRAY(N); \
+    return Nan::ThrowTypeError(errorStream.str().c_str()); \
+  } \
+  \
+  Local<Array> S = Local<Array>::Cast(V);
+
 
 #define ASSERT_REJECT_PROPERTY_BOOLEAN(N, V, S) \
   if (!V->IsBoolean()) { \

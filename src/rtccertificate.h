@@ -38,15 +38,14 @@ class RTCCertificate : public Nan::ObjectWrap {
     return _constructor;
   }
 
+  const rtc::scoped_refptr<rtc::RTCCertificate> _certificate;
+
  private:
   explicit RTCCertificate(
       const rtc::scoped_refptr<rtc::RTCCertificate>& certificate);
   ~RTCCertificate();
 
   static NAN_METHOD(New);
-
- protected:
-  const rtc::scoped_refptr<rtc::RTCCertificate> _certificate;
 };
 
 #endif  // RTCCERTIFICATE_H_
