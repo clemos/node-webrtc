@@ -21,15 +21,19 @@
 #include "common.h"
 #include "globals.h"
 #include "observer/createsessiondescriptionobserver.h"
+#include "observer/setsessiondescriptionobserver.h"
 #include "observer/peerconnectionobserver.h"
 #include "rtccertificate.h"
 #include "rtcpeerconnection.h"
+#include "rtcsessiondescription.h"
 
 Nan::Persistent<FunctionTemplate> RTCPeerConnection::constructor;
 
 static const char sRTCPeerConnection[] = "RTCPeerConnection";
 
 static const char kCreateOffer[] = "createOffer";
+static const char kSetLocalDescription[] = "setLocalDescription";
+static const char kCreateDataChannel[] = "createDataChannel";
 static const char kGenerateCertificate[] = "generateCertificate";
 
 static const char kIceServers[] = "iceServers";
@@ -90,6 +94,8 @@ NAN_MODULE_INIT(RTCPeerConnection::Init) {
 
   Local<ObjectTemplate> prototype = ctor->InstanceTemplate();
   Nan::SetMethod(prototype, kCreateOffer, CreateOffer);
+  Nan::SetMethod(prototype, kSetLocalDescription, SetLocalDescription);
+  Nan::SetMethod(prototype, kCreateDataChannel, CreateDataChannel);
 
   Local<ObjectTemplate> tpl = ctor->InstanceTemplate();
   Nan::SetAccessor(tpl, LOCAL_STRING(kConnectionState),
@@ -137,7 +143,6 @@ NAN_METHOD(RTCPeerConnection::New) {
   CONSTRUCTOR_HEADER("RTCPeerConnection")
   webrtc::FakeConstraints constraints;
   webrtc::PeerConnectionInterface::RTCConfiguration _config;
-  webrtc::PeerConnectionInterface::IceServer server;
   
   if (info.Length() > 0) {
     ASSERT_OBJECT_ARGUMENT(0, config);
@@ -226,6 +231,38 @@ NAN_METHOD(RTCPeerConnection::CreateOffer) {
                           iceRestart);
 
   object->_peerConnection->CreateOffer(observer, &constraints);
+}
+
+NAN_METHOD(RTCPeerConnection::SetLocalDescription) {
+  METHOD_HEADER("RTCPeerConnection", "setLocalDescription");
+  UNWRAP_OBJECT(RTCPeerConnection, object);
+
+  rtc::scoped_refptr<webrtc::SetSessionDescriptionObserver> observer;
+
+  // FIXME: Promise implementation only
+  DECLARE_PROMISE_RESOLVER;
+  ASSERT_REJECT_OBJECT_ARGUMENT(0, sessionDescription);
+
+  // FIXME: validate it's a RTCSessionDescription object
+  RTCSessionDescription* _sessionDescription = Nan::ObjectWrap::Unwrap<RTCSessionDescription>(sessionDescription);
+
+  observer = SetSessionDescriptionObserver::Create(
+      new Nan::Persistent<Promise::Resolver>(resolver));
+
+  object->_peerConnection->SetLocalDescription(observer, _sessionDescription->_sessionDescription);
+
+}
+
+NAN_METHOD(RTCPeerConnection::CreateDataChannel) {
+  METHOD_HEADER("RTCPeerConnection", "setLocalDescription");
+  UNWRAP_OBJECT(RTCPeerConnection, object);
+
+  ASSERT_STRING_ARGUMENT(0, name);
+
+  const webrtc::DataChannelInit init;
+
+  object->_peerConnection->CreateDataChannel(*name, &init);
+
 }
 
 NAN_GETTER(RTCPeerConnection::GetConnectionState) {

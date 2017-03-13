@@ -122,6 +122,14 @@
   \
   Local<Function> N = info[I].As<v8::Function>();
 
+#define ASSERT_STRING_ARGUMENT(I, N) \
+  if (!info[I]->IsString()) { \
+    errorStream << ERROR_ARGUMENT_NOT_FUNCTION(I + 1, #N); \
+    return Nan::ThrowTypeError(errorStream.str().c_str()); \
+  } \
+  \
+  String::Utf8Value N(info[I]->ToString());
+
 #define ASSERT_REJECT_OBJECT_ARGUMENT(I, N) \
   if (!info[I]->IsObject()) { \
     errorStream << ERROR_ARGUMENT_NOT_OBJECT(I + 1, #N); \
