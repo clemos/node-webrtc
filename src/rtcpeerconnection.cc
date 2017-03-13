@@ -130,16 +130,31 @@ RTCPeerConnection::~RTCPeerConnection() {
 }
 
 NAN_METHOD(RTCPeerConnection::New) {
+  CONSTRUCTOR_HEADER("RTCPeerConnection")
   webrtc::FakeConstraints constraints;
-  webrtc::PeerConnectionInterface::RTCConfiguration config;
+  webrtc::PeerConnectionInterface::RTCConfiguration _config;
   webrtc::PeerConnectionInterface::IceServer server;
-  server.uri = "stun:stun.l.google.com:19302";
-  config.servers.push_back(server);
+  //server.uri = "stun:stun.l.google.com:19302";
+  //config.servers.push_back(server);
+
+  if (info.Length() > 0) {
+    ASSERT_OBJECT_ARGUMENT(0, config);
+
+    DECLARE_OBJECT_PROPERTY(config, "iceServer", iceServerVal);
+    Local<Object> iceServer = iceServerVal->ToObject();
+
+    DECLARE_OBJECT_PROPERTY(iceServer, "url", iceServerUrlVal);
+    ASSERT_PROPERTY_STRING("iceServer.url", iceServerUrlVal, iceServerUrl);
+
+    webrtc::PeerConnectionInterface::IceServer server;
+    server.uri = *iceServerUrl;
+    _config.servers.push_back(server);
+  }
 
   constraints.AddOptional(webrtc::MediaConstraintsInterface::kEnableDtlsSrtp,
                           "true");
 
-  RTCPeerConnection *rtcPeerConnection = new RTCPeerConnection(config,
+  RTCPeerConnection *rtcPeerConnection = new RTCPeerConnection(_config,
                                                                constraints);
   rtcPeerConnection->Wrap(info.This());
 
