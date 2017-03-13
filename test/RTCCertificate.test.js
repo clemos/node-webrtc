@@ -98,7 +98,7 @@ describe('RTCCertificate', () => {
           assert.typeOf(certificateFromPEM, 'RTCCertificate');
       });
 
-      if('should have equals \'fingerprints` and `toPEM()` values', () => {
+      it('should have equals \'fingerprints` and `toPEM()` values', () => {
           const pem = certificate.toPEM();
           const certificateFromPEM = RTCCertificate.fromPEM(pem);
  
