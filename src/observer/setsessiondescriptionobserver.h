@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef OBSERVER_CREATESESSIONDESCRIPTIONOBSERVER_H_
-#define OBSERVER_CREATESESSIONDESCRIPTIONOBSERVER_H_
+#ifndef OBSERVER_SETSESSIONDESCRIPTIONOBSERVER_H_
+#define OBSERVER_SETSESSIONDESCRIPTIONOBSERVER_H_
 
 #include <nan.h>
 #include <string>
@@ -23,27 +23,27 @@
 
 using namespace v8;
 
-class CreateSessionDescriptionEvent;
-class CreateSessionDescriptionObserver :
-    public webrtc::CreateSessionDescriptionObserver {
+class SetSessionDescriptionEvent;
+class SetSessionDescriptionObserver :
+    public webrtc::SetSessionDescriptionObserver {
  public:
-  static CreateSessionDescriptionObserver *Create(
+  static SetSessionDescriptionObserver *Create(
       Persistent<Promise::Resolver> *resolver);
-  static CreateSessionDescriptionObserver *Create(
+  static SetSessionDescriptionObserver *Create(
       Persistent<Function> *successCallback,
       Persistent<Function> *failureCallback);
 
-  void OnSuccess(webrtc::SessionDescriptionInterface* desc);
+  void OnSuccess();
   void OnFailure(const std::string& error);
 
  private:
-  CreateSessionDescriptionEvent *_event;
+  SetSessionDescriptionEvent *_event;
 
  protected:
-  explicit CreateSessionDescriptionObserver(
+  explicit SetSessionDescriptionObserver(
       Persistent<Promise::Resolver> *resolver);
 
-  CreateSessionDescriptionObserver(Persistent<Function> *successCallback,
+  SetSessionDescriptionObserver(Persistent<Function> *successCallback,
                                       Persistent<Function> *failureCallback);
 };
 
