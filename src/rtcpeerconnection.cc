@@ -26,13 +26,16 @@
 #include "rtccertificate.h"
 #include "rtcpeerconnection.h"
 #include "rtcsessiondescription.h"
+#include "rtcdatachannel.h"
 
 Nan::Persistent<FunctionTemplate> RTCPeerConnection::constructor;
 
 static const char sRTCPeerConnection[] = "RTCPeerConnection";
 
 static const char kCreateOffer[] = "createOffer";
+static const char kCreateAnswer[] = "createAnswer";
 static const char kSetLocalDescription[] = "setLocalDescription";
+static const char kSetRemoteDescription[] = "setRemoteDescription";
 static const char kCreateDataChannel[] = "createDataChannel";
 static const char kGenerateCertificate[] = "generateCertificate";
 
@@ -94,7 +97,9 @@ NAN_MODULE_INIT(RTCPeerConnection::Init) {
 
   Local<ObjectTemplate> prototype = ctor->InstanceTemplate();
   Nan::SetMethod(prototype, kCreateOffer, CreateOffer);
+  Nan::SetMethod(prototype, kCreateAnswer, CreateAnswer);
   Nan::SetMethod(prototype, kSetLocalDescription, SetLocalDescription);
+  Nan::SetMethod(prototype, kSetRemoteDescription, SetRemoteDescription);
   Nan::SetMethod(prototype, kCreateDataChannel, CreateDataChannel);
 
   Local<ObjectTemplate> tpl = ctor->InstanceTemplate();
@@ -159,7 +164,6 @@ NAN_METHOD(RTCPeerConnection::New) {
         ASSERT_PROPERTY_STRING(kIceServerUrls, iceServerUrlVal, iceServerUrl);
         server.urls.push_back(*iceServerUrl);
       }
-
       _config.servers.push_back(server);
     }
 
@@ -228,6 +232,35 @@ NAN_METHOD(RTCPeerConnection::CreateOffer) {
   object->_peerConnection->CreateOffer(observer, &constraints);
 }
 
+NAN_METHOD(RTCPeerConnection::CreateAnswer) {
+  METHOD_HEADER("RTCPeerConnection", "createAnswer");
+  UNWRAP_OBJECT(RTCPeerConnection, object);
+
+  unsigned char start = 0;
+  rtc::scoped_refptr<webrtc::CreateSessionDescriptionObserver> observer;
+
+  if (info.Length() < 2) {
+    DECLARE_PROMISE_RESOLVER;
+
+    observer = CreateSessionDescriptionObserver::Create(
+        new Nan::Persistent<Promise::Resolver>(resolver));
+  } else if (info.Length() > 1) {
+    if (info.Length() > 2) {
+      start = 1;
+    }
+
+    ASSERT_FUNCTION_ARGUMENT(start, successCallback);
+    ASSERT_FUNCTION_ARGUMENT(start + 1, failureCallback);
+
+    observer = CreateSessionDescriptionObserver::Create(
+        new Nan::Persistent<Function>(successCallback),
+        new Nan::Persistent<Function>(failureCallback));
+  }
+
+  webrtc::FakeConstraints constraints;
+  object->_peerConnection->CreateAnswer(observer, &constraints);
+}
+
 NAN_METHOD(RTCPeerConnection::SetLocalDescription) {
   METHOD_HEADER("RTCPeerConnection", "setLocalDescription");
   UNWRAP_OBJECT(RTCPeerConnection, object);
@@ -245,19 +278,41 @@ NAN_METHOD(RTCPeerConnection::SetLocalDescription) {
       new Nan::Persistent<Promise::Resolver>(resolver));
 
   object->_peerConnection->SetLocalDescription(observer, _sessionDescription->_sessionDescription);
+}
 
+NAN_METHOD(RTCPeerConnection::SetRemoteDescription) {
+  METHOD_HEADER("RTCPeerConnection", "setRemoteDescription");
+  UNWRAP_OBJECT(RTCPeerConnection, object);
+
+  rtc::scoped_refptr<webrtc::SetSessionDescriptionObserver> observer;
+
+  // FIXME: Promise implementation only
+  DECLARE_PROMISE_RESOLVER;
+  ASSERT_REJECT_OBJECT_ARGUMENT(0, sessionDescription);
+
+  // FIXME: validate it's a RTCSessionDescription object
+  RTCSessionDescription* _sessionDescription = Nan::ObjectWrap::Unwrap<RTCSessionDescription>(sessionDescription);
+
+  observer = SetSessionDescriptionObserver::Create(
+      new Nan::Persistent<Promise::Resolver>(resolver));
+
+  object->_peerConnection->SetRemoteDescription(observer, _sessionDescription->_sessionDescription);
 }
 
 NAN_METHOD(RTCPeerConnection::CreateDataChannel) {
-  METHOD_HEADER("RTCPeerConnection", "setLocalDescription");
+  METHOD_HEADER("RTCPeerConnection", "createDataChannel");
   UNWRAP_OBJECT(RTCPeerConnection, object);
 
   ASSERT_STRING_ARGUMENT(0, name);
 
+  // FIXME: add init options
   const webrtc::DataChannelInit init;
 
-  object->_peerConnection->CreateDataChannel(*name, &init);
+  rtc::scoped_refptr<webrtc::DataChannelInterface> _channel = object->_peerConnection->CreateDataChannel(*name, &init);
 
+  Local<Object> datachannel = RTCDataChannel::Create(_channel);
+
+  info.GetReturnValue().Set(datachannel);
 }
 
 NAN_GETTER(RTCPeerConnection::GetConnectionState) {

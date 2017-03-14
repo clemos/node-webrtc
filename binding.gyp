@@ -15,6 +15,7 @@
                 'src/rtcicecandidate.cc',
                 'src/rtcpeerconnection.cc',
                 'src/rtcsessiondescription.cc',
+                'src/rtcdatachannel.cc',
             ],
             'include_dirs' : [
                 'build/include',
