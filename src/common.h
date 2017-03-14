@@ -62,6 +62,9 @@
 #define ERROR_ARGUMENT_NOT_FUNCTION(INDEX, NAME) \
   "parameter " << INDEX << " ('" << NAME << "') is not a function."
 
+#define ERROR_ARGUMENT_NOT_STRING(INDEX, NAME) \
+  "parameter " << INDEX << " ('" << NAME << "') is not a string."
+
 #ifdef DEBUG
 #define CONSTRUCTOR_HEADER(NAME) \
   LOG(LS_INFO) << __PRETTY_FUNCTION__; \
@@ -124,7 +127,7 @@
 
 #define ASSERT_STRING_ARGUMENT(I, N) \
   if (!info[I]->IsString()) { \
-    errorStream << ERROR_ARGUMENT_NOT_FUNCTION(I + 1, #N); \
+    errorStream << ERROR_ARGUMENT_NOT_STRING(I + 1, #N); \
     return Nan::ThrowTypeError(errorStream.str().c_str()); \
   } \
   \
