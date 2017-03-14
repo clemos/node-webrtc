@@ -21,6 +21,7 @@
 #include "rtcicecandidate.h"
 #include "rtcpeerconnection.h"
 #include "rtcsessiondescription.h"
+#include "rtcdatachannel.h"
 
 NAN_MODULE_INIT(Init) {
   if (!Globals::Init()) {
@@ -31,6 +32,7 @@ NAN_MODULE_INIT(Init) {
   RTCIceCandidate::Init(target);
   RTCPeerConnection::Init(target);
   RTCSessionDescription::Init(target);
+  RTCDataChannel::Init(target);
 
   node::AtExit(Globals::Cleanup);
 }
