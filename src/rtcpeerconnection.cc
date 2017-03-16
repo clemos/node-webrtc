@@ -56,6 +56,8 @@ static const char kP256[] = "P-256";
 static const char kConnectionState[] = "connectionState";
 static const char kCurrentLocalDescription[] = "currentLocalDescription";
 static const char kCurrentRemoteDescription[] = "currentRemoteDescription";
+static const char kLocalDescription[] = "localDescription";
+static const char kRemoteDescription[] = "remoteDescription";
 static const char kIceConnectionState[] = "iceConnectionState";
 static const char kIceGatheringState[] = "iceGatheringState";
 static const char kPendingLocalDescription[] = "pendingLocalDescription";
@@ -109,6 +111,10 @@ NAN_MODULE_INIT(RTCPeerConnection::Init) {
                    GetCurrentLocalDescription);
   Nan::SetAccessor(tpl, LOCAL_STRING(kCurrentRemoteDescription),
                    GetCurrentRemoteDescription);
+  Nan::SetAccessor(tpl, LOCAL_STRING(kLocalDescription),
+                   GetLocalDescription);
+  Nan::SetAccessor(tpl, LOCAL_STRING(kRemoteDescription),
+                   GetRemoteDescription);
   Nan::SetAccessor(tpl, LOCAL_STRING(kIceConnectionState),
                    GetIceConnectionState);
   Nan::SetAccessor(tpl, LOCAL_STRING(kIceGatheringState),
@@ -321,6 +327,36 @@ NAN_GETTER(RTCPeerConnection::GetConnectionState) {
 
 NAN_GETTER(RTCPeerConnection::GetCurrentLocalDescription) {
   info.GetReturnValue().Set(Nan::Null());
+}
+
+NAN_GETTER(RTCPeerConnection::GetLocalDescription) {
+  METHOD_HEADER("RTCPeerConnection", "getLocalDescription");
+  UNWRAP_OBJECT(RTCPeerConnection, object);
+
+  const webrtc::SessionDescriptionInterface *session = object->_peerConnection->local_description();
+
+  const std::string type = session->type();
+  std::string sdp;
+  session->ToString(&sdp);
+
+  Local<Object> desc = RTCSessionDescription::Create( type, sdp );
+
+  info.GetReturnValue().Set(desc);
+}
+
+NAN_GETTER(RTCPeerConnection::GetRemoteDescription) {
+  METHOD_HEADER("RTCPeerConnection", "getRemoteDescription");
+  UNWRAP_OBJECT(RTCPeerConnection, object);
+
+  const webrtc::SessionDescriptionInterface *session = object->_peerConnection->remote_description();
+
+  const std::string type = session->type();
+  std::string sdp;
+  session->ToString(&sdp);
+
+  Local<Object> desc = RTCSessionDescription::Create( type, sdp );
+
+  info.GetReturnValue().Set(desc);
 }
 
 NAN_GETTER(RTCPeerConnection::GetCurrentRemoteDescription) {

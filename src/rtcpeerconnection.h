@@ -44,7 +44,9 @@ class RTCPeerConnection : public Nan::ObjectWrap {
 
   static NAN_GETTER(GetConnectionState);
   static NAN_GETTER(GetCurrentLocalDescription);
-  static NAN_GETTER(GetCurrentRemoteDescription);
+  static NAN_GETTER(GetCurrentRemoteDescription);  
+  static NAN_GETTER(GetLocalDescription);
+  static NAN_GETTER(GetRemoteDescription);
   static NAN_GETTER(GetIceConnectionState);
   static NAN_GETTER(GetIceGatheringState);
   static NAN_GETTER(GetPendingLocalDescription);
