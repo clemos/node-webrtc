@@ -36,6 +36,8 @@ NAN_MODULE_INIT(RTCDataChannel::Init) {
   Nan::SetAccessor(prototype, LOCAL_STRING(kReadyState), GetReadyState);
   
   constructor().Reset(Nan::GetFunction(ctor).ToLocalChecked());
+
+  Nan::Set(target, LOCAL_STRING(sRTCDataChannel), ctor->GetFunction());
 }
 
 RTCDataChannel::RTCDataChannel(
