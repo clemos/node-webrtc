@@ -16,6 +16,8 @@
 
 #include <iostream>
 #include "peerconnectionobserver.h"
+#include "event/peerconnectionevent.h"
+#include "globals.h"
 
 PeerConnectionObserver::PeerConnectionObserver() {
 }
@@ -26,7 +28,9 @@ PeerConnectionObserver::~PeerConnectionObserver() {
 
 void PeerConnectionObserver::OnSignalingChange(
     webrtc::PeerConnectionInterface::SignalingState new_state) {
-  std::cout << "OnSignalingChange" << std::endl;
+  PeerConnectionEvent* _event = new PeerConnectionEvent(_eventEmitter);
+  Globals::GetEventQueue()->PushEvent(_event);
+
 }
 
 void PeerConnectionObserver::OnAddStream(
@@ -77,6 +81,16 @@ PeerConnectionObserver *PeerConnectionObserver::Create() {
 }
 
 void PeerConnectionObserver::SetPeerConnection(
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection) {
+    RTCPeerConnection* peerConnection) {
   _peerConnection = peerConnection;
 }
+
+void PeerConnectionObserver::SetEventEmitter(
+    EventEmitter* eventEmitter) {
+  _eventEmitter = eventEmitter;
+}
+
+// void PeerConnectionObserver::SetEmit(
+//     Persistent<Function>* emit) {
+//   _emit = emit;
+// }
