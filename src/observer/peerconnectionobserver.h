@@ -18,6 +18,10 @@
 #define OBSERVER_PEERCONNECTIONOBSERVER_H_
 
 #include <webrtc/api/peerconnectioninterface.h>
+#include <rtcpeerconnection.h>
+#include <nan.h>
+
+using namespace v8;
 
 class PeerConnectionObserver : public rtc::RefCountInterface,
                                public webrtc::PeerConnectionObserver {
@@ -25,7 +29,13 @@ class PeerConnectionObserver : public rtc::RefCountInterface,
   static PeerConnectionObserver *Create();
 
   void SetPeerConnection(
-      rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection);
+      RTCPeerConnection* peerConnection);
+
+  // void SetEmit(
+  //     Persistent<Function>* emit);
+
+  void SetEventEmitter(
+      EventEmitter* eventEmitter);
 
   // Triggered when the SignalingState changed.
   void OnSignalingChange(
@@ -66,7 +76,9 @@ class PeerConnectionObserver : public rtc::RefCountInterface,
   void OnIceConnectionReceivingChange(bool receiving);
 
  private:
-  rtc::scoped_refptr<webrtc::PeerConnectionInterface> _peerConnection;
+  RTCPeerConnection* _peerConnection;
+  //Persistent<Function>* _emit;
+  EventEmitter* _eventEmitter;
 
  protected:
   PeerConnectionObserver();

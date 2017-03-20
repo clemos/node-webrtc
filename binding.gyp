@@ -5,9 +5,11 @@
             'sources': [
                 'src/event/createsessiondescriptionevent.cc',
                 'src/event/setsessiondescriptionevent.cc',
+                'src/event/peerconnectionevent.cc',
                 'src/event/eventqueue.cc',
                 'src/globals.cc',
                 'src/module.cc',
+                'src/eventemitter.cc',
                 'src/observer/createsessiondescriptionobserver.cc',
                 'src/observer/setsessiondescriptionobserver.cc',
                 'src/observer/peerconnectionobserver.cc',
