@@ -15,26 +15,20 @@
  */
 
 #include "common.h"
-#include "peerconnectionevent.h"
-#include <iostream>
+#include "emitterevent.h"
 
 using namespace v8;
 
-PeerConnectionEvent::PeerConnectionEvent( EventEmitter *eventEmitter ) : 
+EmitterEvent::EmitterEvent( EventEmitter *eventEmitter ) : 
   _eventEmitter(eventEmitter) {
 }
 
-void PeerConnectionEvent::Handle() {
+void EmitterEvent::Handle() {
   Nan::HandleScope scope;
-
-  _eventEmitter->Emit(LOCAL_STRING("test"), LOCAL_STRING("test"));
+  _eventEmitter->Emit(LOCAL_STRING(_type));
 }
 
-void PeerConnectionEvent::SetSucceeded(bool succeeded) {
-  _succeeded = succeeded;
-}
-
-void PeerConnectionEvent::SetErrorMessage(
-    const std::string &errorMessage) {
-  _errorMessage = errorMessage;
+void EmitterEvent::SetType(
+    const std::string &type) {
+  _type = type;
 }

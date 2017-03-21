@@ -19,7 +19,8 @@
 
 #include <webrtc/api/peerconnectioninterface.h>
 #include <rtcpeerconnection.h>
-#include <nan.h>
+#include "event/emitterevent.h"
+#include "event/peerconnectioniceevent.h"
 
 using namespace v8;
 

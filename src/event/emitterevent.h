@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef EVENTEMITTER_H_
-#define EVENTEMITTER_H_
+#ifndef EVENT_EMITTEREVENT_H_
+#define EVENT_EMITTEREVENT_H_
 
-#include <nan.h>
-#include <string>
+#include "event.h"
+#include "eventemitter.h"
 
 using namespace v8;
 
-class EventEmitter : public Nan::ObjectWrap {
+class EmitterEvent : public Event {
  public:
-  explicit EventEmitter();
-  Persistent<Function>* _emit = nullptr;
-
-  void Wrap( Local<Object> obj );
-  void Emit( Local<String> type );
-  void EmitData( Local<String> type, Local<Value> data );
+  explicit EmitterEvent( EventEmitter *eventEmitter );
+  
+  void Handle();
+  void SetType(const std::string& type);
+  
+ protected:
+  EventEmitter *_eventEmitter;
+  std::string _type;
 
 };
 
-#endif  // EVENTEMITTER_H_
+#endif  // EVENT_EMITTEREVENT_H_

@@ -283,10 +283,6 @@ NAN_METHOD(RTCPeerConnection::CreateAnswer) {
   object->_peerConnection->CreateAnswer(observer, &constraints);
 }
 
-void RTCPeerConnection::Test(){
-  std::cout << "TEST TEST" << std::endl;
-}
-
 NAN_METHOD(RTCPeerConnection::TestEmit) {
   METHOD_HEADER("RTCPeerConnection", "testEmit");
   // UNWRAP_OBJECT(RTCPeerConnection, object);

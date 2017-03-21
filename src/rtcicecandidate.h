@@ -25,9 +25,10 @@ using namespace v8;
 class RTCIceCandidate : public Nan::ObjectWrap {
  public:
   static NAN_MODULE_INIT(Init);
+  static Local<Object> Create(const webrtc::IceCandidateInterface *_iceCandidate);
 
  private:
-  explicit RTCIceCandidate(webrtc::IceCandidateInterface *iceCandidate);
+  explicit RTCIceCandidate(const webrtc::IceCandidateInterface *iceCandidate);
   ~RTCIceCandidate();
 
   static NAN_METHOD(New);
@@ -46,10 +47,13 @@ class RTCIceCandidate : public Nan::ObjectWrap {
   static NAN_GETTER(GetRelatedAddress);
   static NAN_GETTER(GetRelatedPort);
 
-  static Nan::Persistent<FunctionTemplate> constructor;
+  static inline Nan::Persistent<v8::Function>& constructor() {
+    static Nan::Persistent<v8::Function> _constructor;
+    return _constructor;
+  }
 
  protected:
-  webrtc::IceCandidateInterface *_iceCandidate;
+  const webrtc::IceCandidateInterface *_iceCandidate;
 };
 
 #endif  // RTCICECANDIDATE_H_

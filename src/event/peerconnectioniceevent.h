@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef EVENT_PEERCONNECTIONEVENT_H_
-#define EVENT_PEERCONNECTIONEVENT_H_
+#ifndef EVENT_PEERCONNECTIONICEEVENT_H_
+#define EVENT_PEERCONNECTIONICEEVENT_H_
 
-#include <nan.h>
-#include <webrtc/api/jsep.h>
-#include "event.h"
+#include "emitterevent.h"
 #include "eventemitter.h"
+#include <webrtc/api/jsep.h>
 
 using namespace v8;
 
-class PeerConnectionEvent : public Event {
+class PeerConnectionIceEvent : public EmitterEvent {
  public:
-  explicit PeerConnectionEvent( EventEmitter *eventEmitter );
+  explicit PeerConnectionIceEvent(EventEmitter *eventEmitter);
   
   void Handle();
-  void SetSucceeded(bool succeeded);
-  void SetErrorMessage(const std::string& errorMessage);
+  void SetCandidate(const webrtc::IceCandidateInterface* candidate);
   
  private:
-  bool _succeeded;
-  std::string _errorMessage;
-  EventEmitter *_eventEmitter;
+  const webrtc::IceCandidateInterface *_candidate;
+
 };
 
-#endif  // EVENT_PEERCONNECTIONEVENT_H_
+#endif  // EVENT_PEERCONNECTIONICEEVENT_H_
