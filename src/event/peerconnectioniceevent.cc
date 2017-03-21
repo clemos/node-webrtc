@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-#ifndef EVENTEMITTER_H_
-#define EVENTEMITTER_H_
+#include "common.h"
+#include "peerconnectioniceevent.h"
+#include "eventemitter.h"
+#include "rtcicecandidate.h"
 
-#include <nan.h>
-#include <string>
+#include <webrtc/p2p/base/candidate.h>
+#include <iostream>
 
 using namespace v8;
 
-class EventEmitter : public Nan::ObjectWrap {
- public:
-  explicit EventEmitter();
-  Persistent<Function>* _emit = nullptr;
+PeerConnectionIceEvent::PeerConnectionIceEvent(EventEmitter *eventEmitter) 
+  : EmitterEvent(eventEmitter) {
+}
 
-  void Wrap( Local<Object> obj );
-  void Emit( Local<String> type );
-  void EmitData( Local<String> type, Local<Value> data );
+void PeerConnectionIceEvent::Handle() {
+  Nan::HandleScope scope;
 
-};
+  _eventEmitter->Emit(LOCAL_STRING(_type));
+}
 
-#endif  // EVENTEMITTER_H_
+void PeerConnectionIceEvent::SetCandidate(const webrtc::IceCandidateInterface* candidate) {
+
+    // FIXME: needs to serialize here...
+  _candidate = candidate;
+}

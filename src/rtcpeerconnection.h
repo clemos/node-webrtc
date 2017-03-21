@@ -29,10 +29,6 @@ class RTCPeerConnection : public EventEmitter {
  public:
   static NAN_MODULE_INIT(Init);
 
-  //Persistent<Function>* emit = nullptr;
-  //void TestEmit();
-  void Test();
-
  private:
   explicit RTCPeerConnection(
       const webrtc::PeerConnectionInterface::RTCConfiguration& config,
