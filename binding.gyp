@@ -7,6 +7,7 @@
                 'src/event/setsessiondescriptionevent.cc',
                 'src/event/emitterevent.cc',
                 'src/event/peerconnectioniceevent.cc',
+                'src/event/datachannelevent.cc',
                 'src/event/eventqueue.cc',
                 'src/globals.cc',
                 'src/module.cc',

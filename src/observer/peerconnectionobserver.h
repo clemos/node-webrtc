@@ -21,6 +21,7 @@
 #include <rtcpeerconnection.h>
 #include "event/emitterevent.h"
 #include "event/peerconnectioniceevent.h"
+#include "event/datachannelevent.h"
 
 using namespace v8;
 
@@ -31,9 +32,6 @@ class PeerConnectionObserver : public rtc::RefCountInterface,
 
   void SetPeerConnection(
       RTCPeerConnection* peerConnection);
-
-  // void SetEmit(
-  //     Persistent<Function>* emit);
 
   void SetEventEmitter(
       EventEmitter* eventEmitter);
