@@ -31,7 +31,10 @@ class PeerConnectionIceEvent : public EmitterEvent {
   void SetCandidate(const webrtc::IceCandidateInterface* candidate);
   
  private:
-  const webrtc::IceCandidateInterface *_candidate;
+  std::string _candidate = "";
+  std::string _sdpMid = "";
+  int _sdpMLineIndex = 0;
+  //std::string _ufrag;
 
 };
 

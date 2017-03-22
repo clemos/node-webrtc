@@ -81,19 +81,17 @@ RTCIceCandidate::~RTCIceCandidate() {
   delete _iceCandidate;
 }
 
-Local<Object> RTCIceCandidate::Create(const webrtc::IceCandidateInterface *iceCandidate) {
+Local<Object> RTCIceCandidate::Create(std::string sdpMid, int sdpMLineIndex, std::string candidate) {
   Local<Function> cons = Nan::New(RTCIceCandidate::constructor());
   
-  // FIXME: broken, need to serialize / deserialize all in PeerConnectionIceEvent
   Local<Object> candidateInitDict = Nan::New<Object>();
+  candidateInitDict->Set(LOCAL_STRING(kSdpMid), LOCAL_STRING(sdpMid));
+  candidateInitDict->Set(LOCAL_STRING(kSdpMLineIndex), Nan::New<Integer>(sdpMLineIndex));
+  candidateInitDict->Set(LOCAL_STRING(kCandidate), LOCAL_STRING(candidate));
   
   const int argc = 1;
   Local<Value> argv[1] = { candidateInitDict };
-
   Local<Object> instance = Nan::NewInstance(cons, argc, argv).ToLocalChecked();
-
-  RTCIceCandidate *_candidate = new RTCIceCandidate(iceCandidate);
-  _candidate->Wrap(instance);
 
   return instance;
 }

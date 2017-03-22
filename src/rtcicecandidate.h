@@ -25,7 +25,7 @@ using namespace v8;
 class RTCIceCandidate : public Nan::ObjectWrap {
  public:
   static NAN_MODULE_INIT(Init);
-  static Local<Object> Create(const webrtc::IceCandidateInterface *_iceCandidate);
+  static Local<Object> Create(std::string sdpMid, int sdpMLineIndex, std::string candidate);
 
  private:
   explicit RTCIceCandidate(const webrtc::IceCandidateInterface *iceCandidate);
