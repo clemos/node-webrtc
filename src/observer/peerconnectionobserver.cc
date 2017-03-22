@@ -29,7 +29,7 @@ PeerConnectionObserver::PeerConnectionObserver() {
 }
 
 PeerConnectionObserver::~PeerConnectionObserver() {
-  _peerConnection = NULL;
+  _eventEmitter = NULL;
 }
 
 void PeerConnectionObserver::OnSignalingChange(
@@ -98,17 +98,7 @@ PeerConnectionObserver *PeerConnectionObserver::Create() {
   return new rtc::RefCountedObject<PeerConnectionObserver>();
 }
 
-void PeerConnectionObserver::SetPeerConnection(
-    RTCPeerConnection* peerConnection) {
-  _peerConnection = peerConnection;
-}
-
 void PeerConnectionObserver::SetEventEmitter(
     EventEmitter* eventEmitter) {
   _eventEmitter = eventEmitter;
 }
-
-// void PeerConnectionObserver::SetEmit(
-//     Persistent<Function>* emit) {
-//   _emit = emit;
-// }

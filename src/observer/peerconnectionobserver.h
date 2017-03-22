@@ -30,9 +30,6 @@ class PeerConnectionObserver : public rtc::RefCountInterface,
  public:
   static PeerConnectionObserver *Create();
 
-  void SetPeerConnection(
-      RTCPeerConnection* peerConnection);
-
   void SetEventEmitter(
       EventEmitter* eventEmitter);
 
@@ -75,8 +72,6 @@ class PeerConnectionObserver : public rtc::RefCountInterface,
   void OnIceConnectionReceivingChange(bool receiving);
 
  private:
-  RTCPeerConnection* _peerConnection;
-  //Persistent<Function>* _emit;
   EventEmitter* _eventEmitter;
 
  protected:
