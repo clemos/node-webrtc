@@ -51,7 +51,9 @@ void PeerConnectionObserver::OnRemoveStream(
 
 void PeerConnectionObserver::OnDataChannel(
     rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) {
-  std::cout << "OnDataChannel" << std::endl;
+  DataChannelEvent* _event = new DataChannelEvent(_eventEmitter, data_channel);
+  _event->SetType(kDataChannel);
+  Globals::GetEventQueue()->PushEvent(_event);
 }
 
 void PeerConnectionObserver::OnRenegotiationNeeded() {
