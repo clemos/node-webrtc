@@ -76,12 +76,6 @@ void PeerConnectionObserver::OnIceGatheringChange(
 
 void PeerConnectionObserver::OnIceCandidate(
     const webrtc::IceCandidateInterface *candidate) {
-
-  std::string candidateValue;
-  candidate->ToString(&candidateValue);
-
-  std::cout << candidateValue << std::endl;
-
   PeerConnectionIceEvent* _event = new PeerConnectionIceEvent(_eventEmitter);
   _event->SetType(kIceCandidate);
   _event->SetCandidate(candidate);

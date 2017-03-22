@@ -24,6 +24,8 @@
 
 using namespace v8;
 
+static const char kCandidate[] = "candidate";
+
 PeerConnectionIceEvent::PeerConnectionIceEvent(EventEmitter *eventEmitter) 
   : EmitterEvent(eventEmitter) {
 }
@@ -31,11 +33,16 @@ PeerConnectionIceEvent::PeerConnectionIceEvent(EventEmitter *eventEmitter)
 void PeerConnectionIceEvent::Handle() {
   Nan::HandleScope scope;
 
-  _eventEmitter->Emit(LOCAL_STRING(_type));
+  // FIXME: make proper PeerConnectionIceEvent ?
+  Local<Object> e = Nan::New<Object>();
+  e->Set(LOCAL_STRING(kCandidate), 
+         RTCIceCandidate::Create(_sdpMid, _sdpMLineIndex, _candidate));
+  
+  _eventEmitter->EmitData(LOCAL_STRING(_type),e);
 }
 
 void PeerConnectionIceEvent::SetCandidate(const webrtc::IceCandidateInterface* candidate) {
-
-    // FIXME: needs to serialize here...
-  _candidate = candidate;
+  candidate->ToString(&_candidate);
+  _sdpMid = candidate->sdp_mid();
+  _sdpMLineIndex = candidate->sdp_mline_index();
 }
