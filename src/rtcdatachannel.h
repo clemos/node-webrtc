@@ -20,16 +20,19 @@
 #include <nan.h>
 #include <webrtc/api/jsep.h>
 #include <string>
+#include "eventemitter.h"
 
 using namespace v8;
 
-class RTCDataChannel : public Nan::ObjectWrap {
+class RTCDataChannel : public EventEmitter {
  public:
   static NAN_MODULE_INIT(Init);
 
   static NAN_GETTER(GetLabel);
   static NAN_GETTER(GetOrdered);
   static NAN_GETTER(GetReadyState);
+
+  static NAN_METHOD(Send);
 
   static Local<Object> Create(
     const rtc::scoped_refptr<webrtc::DataChannelInterface>& datachannel);

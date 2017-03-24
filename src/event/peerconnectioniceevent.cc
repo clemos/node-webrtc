@@ -35,8 +35,13 @@ void PeerConnectionIceEvent::Handle() {
 
   // FIXME: make proper PeerConnectionIceEvent ?
   Local<Object> e = Nan::New<Object>();
-  e->Set(LOCAL_STRING(kCandidate), 
+  
+  if(_candidate.length() && _sdpMid.length()) {
+    e->Set(LOCAL_STRING(kCandidate), 
          RTCIceCandidate::Create(_sdpMid, _sdpMLineIndex, _candidate));
+  } else {
+    e->Set(LOCAL_STRING(kCandidate), Nan::Null());
+  }
   
   _eventEmitter->EmitData(LOCAL_STRING(_type),e);
 }

@@ -141,7 +141,6 @@ RTCPeerConnection::RTCPeerConnection(
   _peerConnectionObserver = PeerConnectionObserver::Create();
   _peerConnection = _peerConnectionFactory->CreatePeerConnection(
           config, &constraints, NULL, NULL, _peerConnectionObserver);
-  //_peerConnectionObserver->SetPeerConnection(_peerConnection);
 }
 
 RTCPeerConnection::~RTCPeerConnection() {
@@ -196,18 +195,9 @@ NAN_METHOD(RTCPeerConnection::New) {
   RTCPeerConnection *rtcPeerConnection = new RTCPeerConnection(_config,
                                                                constraints);
   rtcPeerConnection->Wrap(info.This());
-
-  //  "access" emit function inherited from EventEmitter
-  //rtcPeerConnection->emit = new Nan::Persistent<v8::Function>(v8::Local<v8::Function>::Cast(rtcPeerConnection->handle()->Get(Nan::New("emit2").ToLocalChecked())));
-  //  v8::Local<v8::Function>::Cast(rtcPeerConnection->handle()->Get(Nan::New("emit").ToLocalChecked())));
-
-  //rtcPeerConnection->_peerConnectionObserver->SetEmit(rtcPeerConnection->emit);
+  
   rtcPeerConnection->_peerConnectionObserver->SetEventEmitter(rtcPeerConnection);
-  // rtcPeerConnection->_peerConnectionObserver->SetEmit(
-  //   new Nan::Persistent()
-  // );
-
-
+  
   info.GetReturnValue().Set(info.This());
 }
 
@@ -283,25 +273,13 @@ NAN_METHOD(RTCPeerConnection::CreateAnswer) {
   object->_peerConnection->CreateAnswer(observer, &constraints);
 }
 
-NAN_METHOD(RTCPeerConnection::TestEmit) {
-  METHOD_HEADER("RTCPeerConnection", "testEmit");
-  // UNWRAP_OBJECT(RTCPeerConnection, object);
-
-  // Local<Value> argv[] = { Nan::New("test").ToLocalChecked() };
-  // Nan::New(*object->emit)->Call(object->handle(), 1, argv);
-
-  info.GetReturnValue().Set(Nan::Null());
-}
+// FIXME: factorize SetLocalDescription and SetRemoteDescription
 
 NAN_METHOD(RTCPeerConnection::SetLocalDescription) {
   METHOD_HEADER("RTCPeerConnection", "setLocalDescription");
   UNWRAP_OBJECT(RTCPeerConnection, object);
 
   rtc::scoped_refptr<webrtc::SetSessionDescriptionObserver> observer;
-
-  // Local<Function> emit = Nan::New(*object->emit);
-  // Local<Value> argv[] = { Nan::New("test").ToLocalChecked() };
-  // emit->Call( object->handle(), 1 , argv );
 
   // FIXME: Promise implementation only
   DECLARE_PROMISE_RESOLVER;
@@ -313,7 +291,20 @@ NAN_METHOD(RTCPeerConnection::SetLocalDescription) {
   observer = SetSessionDescriptionObserver::Create(
       new Nan::Persistent<Promise::Resolver>(resolver));
 
-  object->_peerConnection->SetLocalDescription(observer, _sessionDescription->_sessionDescription);
+  std::string sdp;
+  _sessionDescription->_sessionDescription->ToString(&sdp);
+  std::string type = _sessionDescription->_sessionDescription->type();
+  
+  webrtc::SdpParseError error;
+  webrtc::SessionDescriptionInterface *desc;
+  desc = webrtc::CreateSessionDescription(type, sdp, &error);
+
+  if (!desc) {
+    errorStream << error.description;
+    return Nan::ThrowTypeError(errorStream.str().c_str());
+  }
+
+  object->_peerConnection->SetLocalDescription(observer, desc);
 }
 
 NAN_METHOD(RTCPeerConnection::SetRemoteDescription) {
@@ -332,7 +323,21 @@ NAN_METHOD(RTCPeerConnection::SetRemoteDescription) {
   observer = SetSessionDescriptionObserver::Create(
       new Nan::Persistent<Promise::Resolver>(resolver));
 
-  object->_peerConnection->SetRemoteDescription(observer, _sessionDescription->_sessionDescription);
+  std::string sdp;
+  _sessionDescription->_sessionDescription->ToString(&sdp);
+  std::string type = _sessionDescription->_sessionDescription->type();
+  
+  webrtc::SdpParseError error;
+  webrtc::SessionDescriptionInterface *desc;
+  desc = webrtc::CreateSessionDescription(type, sdp, &error);
+
+  if (!desc) {
+    errorStream << error.description;
+    return Nan::ThrowTypeError(errorStream.str().c_str());
+  }
+
+  object->_peerConnection->SetRemoteDescription(observer, desc);
+
 }
 
 NAN_METHOD(RTCPeerConnection::CreateDataChannel) {
@@ -352,6 +357,7 @@ NAN_METHOD(RTCPeerConnection::CreateDataChannel) {
 }
 
 NAN_GETTER(RTCPeerConnection::GetConnectionState) {
+  // FIXME: implement
   info.GetReturnValue().Set(LOCAL_STRING("new"));
 }
 

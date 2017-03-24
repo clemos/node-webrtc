@@ -24,6 +24,7 @@ static const char sRTCDataChannel[] = "RTCDataChannel";
 static const char kLabel[] = "label";
 static const char kOrdered[] = "ordered";
 static const char kReadyState[] = "readyState";
+static const char kSend[] = "send";
 
 NAN_MODULE_INIT(RTCDataChannel::Init) {
   Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(New);
@@ -34,6 +35,8 @@ NAN_MODULE_INIT(RTCDataChannel::Init) {
   Nan::SetAccessor(prototype, LOCAL_STRING(kLabel), GetLabel);
   Nan::SetAccessor(prototype, LOCAL_STRING(kOrdered), GetOrdered);
   Nan::SetAccessor(prototype, LOCAL_STRING(kReadyState), GetReadyState);
+
+  Nan::SetMethod(prototype, kSend, Send);
   
   constructor().Reset(Nan::GetFunction(ctor).ToLocalChecked());
 
@@ -75,4 +78,17 @@ NAN_GETTER(RTCDataChannel::GetReadyState) {
   UNWRAP_OBJECT(RTCDataChannel, object);
   const char* readyState = webrtc::DataChannelInterface::DataStateString(object->_datachannel->state());
   info.GetReturnValue().Set(LOCAL_STRING(readyState));
+}
+
+NAN_METHOD(RTCDataChannel::Send) {
+  METHOD_HEADER("RTCDataChannel", "send");
+  UNWRAP_OBJECT(RTCDataChannel, object);
+
+  // FIXME: implement for ArrayBuffer, others?
+  ASSERT_STRING_ARGUMENT(0, data);
+
+  webrtc::DataBuffer _buffer(*data);
+  object->_datachannel->Send(_buffer);
+
+  info.GetReturnValue().Set(Nan::Null());
 }
