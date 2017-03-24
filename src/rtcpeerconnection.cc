@@ -286,25 +286,13 @@ NAN_METHOD(RTCPeerConnection::SetLocalDescription) {
   ASSERT_REJECT_OBJECT_ARGUMENT(0, sessionDescription);
 
   // FIXME: validate it's a RTCSessionDescription object
-  RTCSessionDescription* _sessionDescription = Nan::ObjectWrap::Unwrap<RTCSessionDescription>(sessionDescription);
+  RTCSessionDescription* _sessionDescription;
+  _sessionDescription = Nan::ObjectWrap::Unwrap<RTCSessionDescription>(sessionDescription);
 
   observer = SetSessionDescriptionObserver::Create(
       new Nan::Persistent<Promise::Resolver>(resolver));
 
-  std::string sdp;
-  _sessionDescription->_sessionDescription->ToString(&sdp);
-  std::string type = _sessionDescription->_sessionDescription->type();
-  
-  webrtc::SdpParseError error;
-  webrtc::SessionDescriptionInterface *desc;
-  desc = webrtc::CreateSessionDescription(type, sdp, &error);
-
-  if (!desc) {
-    errorStream << error.description;
-    return Nan::ThrowTypeError(errorStream.str().c_str());
-  }
-
-  object->_peerConnection->SetLocalDescription(observer, desc);
+  object->_peerConnection->SetLocalDescription(observer, _sessionDescription->session_description());
 }
 
 NAN_METHOD(RTCPeerConnection::SetRemoteDescription) {
@@ -318,26 +306,13 @@ NAN_METHOD(RTCPeerConnection::SetRemoteDescription) {
   ASSERT_REJECT_OBJECT_ARGUMENT(0, sessionDescription);
 
   // FIXME: validate it's a RTCSessionDescription object
-  RTCSessionDescription* _sessionDescription = Nan::ObjectWrap::Unwrap<RTCSessionDescription>(sessionDescription);
+  RTCSessionDescription* _sessionDescription;
+  _sessionDescription = Nan::ObjectWrap::Unwrap<RTCSessionDescription>(sessionDescription);
 
   observer = SetSessionDescriptionObserver::Create(
       new Nan::Persistent<Promise::Resolver>(resolver));
 
-  std::string sdp;
-  _sessionDescription->_sessionDescription->ToString(&sdp);
-  std::string type = _sessionDescription->_sessionDescription->type();
-  
-  webrtc::SdpParseError error;
-  webrtc::SessionDescriptionInterface *desc;
-  desc = webrtc::CreateSessionDescription(type, sdp, &error);
-
-  if (!desc) {
-    errorStream << error.description;
-    return Nan::ThrowTypeError(errorStream.str().c_str());
-  }
-
-  object->_peerConnection->SetRemoteDescription(observer, desc);
-
+  object->_peerConnection->SetRemoteDescription(observer, _sessionDescription->session_description());
 }
 
 NAN_METHOD(RTCPeerConnection::CreateDataChannel) {

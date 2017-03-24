@@ -28,7 +28,7 @@ class RTCSessionDescription : public Nan::ObjectWrap {
   static NAN_MODULE_INIT(Init);
 
   static Local<Object> Create(const std::string& type, const std::string &sdp);
-
+  
   static inline Nan::Persistent<v8::Function>& constructor() {
     static Nan::Persistent<v8::Function> _constructor;
     return _constructor;
@@ -42,12 +42,14 @@ class RTCSessionDescription : public Nan::ObjectWrap {
   static const char kPranswer[];
   static const char kRollback[];
 
-  webrtc::SessionDescriptionInterface *_sessionDescription;
+  webrtc::SessionDescriptionInterface* session_description();
 
  private:
   explicit RTCSessionDescription(
-      webrtc::SessionDescriptionInterface *sessionDescription);
+      webrtc::SessionDescriptionInterface* sessionDescription);
   ~RTCSessionDescription();
+
+  webrtc::SessionDescriptionInterface* _sessionDescription;
 
   static NAN_METHOD(New);
 
