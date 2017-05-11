@@ -323,9 +323,9 @@ NAN_METHOD(RTCPeerConnection::CreateDataChannel) {
 
   // FIXME: add init options
   const webrtc::DataChannelInit init;
-
+  
   rtc::scoped_refptr<webrtc::DataChannelInterface> _channel = object->_peerConnection->CreateDataChannel(*name, &init);
-
+  
   Local<Object> datachannel = RTCDataChannel::Create(_channel);
 
   info.GetReturnValue().Set(datachannel);

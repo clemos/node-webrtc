@@ -18,7 +18,6 @@
 #define OBSERVER_PEERCONNECTIONOBSERVER_H_
 
 #include <webrtc/api/peerconnectioninterface.h>
-#include <rtcpeerconnection.h>
 #include "event/emitterevent.h"
 #include "event/peerconnectioniceevent.h"
 #include "event/datachannelevent.h"

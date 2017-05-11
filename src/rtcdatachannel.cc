@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <webrtc/api/datachannelinterface.h>
+#include "observer/datachannelobserver.h"
 #include "rtcdatachannel.h"
 #include "common.h"
 
@@ -46,6 +47,10 @@ NAN_MODULE_INIT(RTCDataChannel::Init) {
 RTCDataChannel::RTCDataChannel(
     const rtc::scoped_refptr<webrtc::DataChannelInterface> &datachannel)
     : _datachannel(datachannel) {
+
+    _datachannelObserver = DataChannelObserver::Create();
+    datachannel->RegisterObserver(_datachannelObserver);
+  
 }
 
 RTCDataChannel::~RTCDataChannel() {}
@@ -57,7 +62,8 @@ Local<Object> RTCDataChannel::Create(
 
   RTCDataChannel *_datachannel = new RTCDataChannel(datachannel);
   _datachannel->Wrap(instance);
-
+  _datachannel->_datachannelObserver->SetEventEmitter(_datachannel);
+  
   return instance;
 }
 

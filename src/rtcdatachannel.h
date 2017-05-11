@@ -21,6 +21,7 @@
 #include <webrtc/api/jsep.h>
 #include <string>
 #include "eventemitter.h"
+#include "observer/datachannelobserver.h"
 
 using namespace v8;
 
@@ -43,13 +44,16 @@ class RTCDataChannel : public EventEmitter {
   }
 
   const rtc::scoped_refptr<webrtc::DataChannelInterface> _datachannel;
-
+  
  private:
   explicit RTCDataChannel(
     const rtc::scoped_refptr<webrtc::DataChannelInterface>& datachannel);
   ~RTCDataChannel();
 
   static NAN_METHOD(New);
+
+ protected:
+  rtc::scoped_refptr<DataChannelObserver> _datachannelObserver;
 
 };
 
