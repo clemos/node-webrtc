@@ -35,16 +35,12 @@ void DataChannelObserver::OnStateChange() {
 }
 
 void DataChannelObserver::OnMessage(const webrtc::DataBuffer& buffer){
-  std::cout << "DataChannel OnMessage" << std::endl;
-
   MessageEvent* _event = new MessageEvent(_eventEmitter);
   _event->SetType(kMessage);
 
   rtc::CopyOnWriteBuffer data = buffer.data;
-  std::string _data((char *)data.data());;
+  std::string _data((char *)data.data(), data.size());;
 
-  std::cout << "message : " << _data << std::endl;
-  
   _event->SetData(_data);
   Globals::GetEventQueue()->PushEvent(_event);
   // TODO

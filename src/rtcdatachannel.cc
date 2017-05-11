@@ -49,11 +49,14 @@ RTCDataChannel::RTCDataChannel(
     : _datachannel(datachannel) {
 
     _datachannelObserver = DataChannelObserver::Create();
-    datachannel->RegisterObserver(_datachannelObserver);
+    _datachannel->RegisterObserver(_datachannelObserver);
   
 }
 
-RTCDataChannel::~RTCDataChannel() {}
+RTCDataChannel::~RTCDataChannel() {
+  _datachannel->UnregisterObserver();
+  _datachannelObserver = NULL;
+}
 
 Local<Object> RTCDataChannel::Create(
   const rtc::scoped_refptr<webrtc::DataChannelInterface> &datachannel) {

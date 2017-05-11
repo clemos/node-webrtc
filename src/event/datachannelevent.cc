@@ -33,8 +33,9 @@ void DataChannelEvent::Handle() {
 
   // FIXME: make proper DataChannelEvent ?
   Local<Object> e = Nan::New<Object>();
-  e->Set(LOCAL_STRING(kChannel), 
-         RTCDataChannel::Create(_channel));
+  // FIXME: move to observer ?
+  Nan::Persistent<Object> channel(RTCDataChannel::Create(_channel));
+  e->Set(LOCAL_STRING(kChannel), Nan::New(channel));
   
   _eventEmitter->EmitData(LOCAL_STRING(_type),e);
 }
