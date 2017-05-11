@@ -38,7 +38,7 @@ NAN_MODULE_INIT(RTCDataChannel::Init) {
   Nan::SetAccessor(prototype, LOCAL_STRING(kReadyState), GetReadyState);
 
   Nan::SetMethod(prototype, kSend, Send);
-  
+
   constructor().Reset(Nan::GetFunction(ctor).ToLocalChecked());
 
   Nan::Set(target, LOCAL_STRING(sRTCDataChannel), ctor->GetFunction());
@@ -50,7 +50,6 @@ RTCDataChannel::RTCDataChannel(
 
     _datachannelObserver = DataChannelObserver::Create();
     _datachannel->RegisterObserver(_datachannelObserver);
-  
 }
 
 RTCDataChannel::~RTCDataChannel() {
@@ -66,7 +65,7 @@ Local<Object> RTCDataChannel::Create(
   RTCDataChannel *_datachannel = new RTCDataChannel(datachannel);
   _datachannel->Wrap(instance);
   _datachannel->_datachannelObserver->SetEventEmitter(_datachannel);
-  
+
   return instance;
 }
 
@@ -85,7 +84,8 @@ NAN_GETTER(RTCDataChannel::GetOrdered) {
 
 NAN_GETTER(RTCDataChannel::GetReadyState) {
   UNWRAP_OBJECT(RTCDataChannel, object);
-  const char* readyState = webrtc::DataChannelInterface::DataStateString(object->_datachannel->state());
+  const char* readyState = webrtc::DataChannelInterface::DataStateString(
+    object->_datachannel->state());
   info.GetReturnValue().Set(LOCAL_STRING(readyState));
 }
 

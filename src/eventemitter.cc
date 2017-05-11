@@ -21,22 +21,22 @@ using namespace v8;
 
 static const char kEmit[] = "emit";
 
-EventEmitter::EventEmitter(){};
+EventEmitter::EventEmitter() {}
 
-void EventEmitter::Wrap( Local<Object> obj ){
-    Nan::ObjectWrap::Wrap( obj );
+void EventEmitter::Wrap(Local<Object> obj) {
+    Nan::ObjectWrap::Wrap(obj);
     _emit = new Nan::Persistent<Function>(
         Local<Function>::Cast(handle()->Get(Nan::New(kEmit).ToLocalChecked())));
 }
 
-void EventEmitter::Emit( Local<String> type ){
+void EventEmitter::Emit(Local<String> type) {
     Nan::HandleScope scope;
     Local<Value> argv[] = { type };
     Local<Function> emit = Nan::New(*_emit);
     emit->Call(handle(), 1, argv);
 }
 
-void EventEmitter::EmitData( Local<String> type, Local<Value> data ){
+void EventEmitter::EmitData(Local<String> type, Local<Value> data) {
     Nan::HandleScope scope;
     Local<Value> argv[] = { type, data };
     Local<Function> emit = Nan::New(*_emit);

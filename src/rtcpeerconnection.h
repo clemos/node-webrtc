@@ -42,10 +42,10 @@ class RTCPeerConnection : public EventEmitter {
   static NAN_METHOD(SetRemoteDescription);
   static NAN_METHOD(CreateDataChannel);
   static NAN_METHOD(GenerateCertificate);
-  
+
   static NAN_GETTER(GetConnectionState);
   static NAN_GETTER(GetCurrentLocalDescription);
-  static NAN_GETTER(GetCurrentRemoteDescription);  
+  static NAN_GETTER(GetCurrentRemoteDescription);
   static NAN_GETTER(GetLocalDescription);
   static NAN_GETTER(GetRemoteDescription);
   static NAN_GETTER(GetIceConnectionState);

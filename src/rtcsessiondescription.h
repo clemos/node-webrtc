@@ -28,7 +28,7 @@ class RTCSessionDescription : public Nan::ObjectWrap {
   static NAN_MODULE_INIT(Init);
 
   static Local<Object> Create(const std::string& type, const std::string &sdp);
-  
+
   static inline Nan::Persistent<v8::Function>& constructor() {
     static Nan::Persistent<v8::Function> _constructor;
     return _constructor;

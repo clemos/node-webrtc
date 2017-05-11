@@ -47,4 +47,4 @@ class CreateSessionDescriptionObserver :
                                       Persistent<Function> *failureCallback);
 };
 
-#endif  // OBSERVER_SETSESSIONDESCRIPTIONOBSERVER_H_
+#endif  // OBSERVER_CREATESESSIONDESCRIPTIONOBSERVER_H_

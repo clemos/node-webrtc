@@ -33,7 +33,7 @@ class SetSessionDescriptionEvent : public Event {
   void Handle();
   void SetSucceeded(bool succeeded);
   void SetErrorMessage(const std::string& errorMessage);
-  
+
  private:
   Persistent<Promise::Resolver> *_resolver;
   Persistent<Function> *_successCallback;

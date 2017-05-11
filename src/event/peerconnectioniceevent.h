@@ -26,16 +26,14 @@ using namespace v8;
 class PeerConnectionIceEvent : public EmitterEvent {
  public:
   explicit PeerConnectionIceEvent(EventEmitter *eventEmitter);
-  
+
   void Handle();
   void SetCandidate(const webrtc::IceCandidateInterface* candidate);
-  
+
  private:
   std::string _candidate;
   std::string _sdpMid;
   int _sdpMLineIndex = 0;
-  //std::string _ufrag;
-
 };
 
 #endif  // EVENT_PEERCONNECTIONICEEVENT_H_

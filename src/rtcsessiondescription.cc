@@ -52,11 +52,12 @@ RTCSessionDescription::~RTCSessionDescription() {
   delete _sessionDescription;
 }
 
-webrtc::SessionDescriptionInterface* RTCSessionDescription::session_description() {
+webrtc::SessionDescriptionInterface*
+RTCSessionDescription::session_description() {
   std::string sdp;
   _sessionDescription->ToString(&sdp);
   std::string type = _sessionDescription->type();
-  
+
   // FIXME: handle error...
   webrtc::SdpParseError error;
   return webrtc::CreateSessionDescription(type, sdp, &error);

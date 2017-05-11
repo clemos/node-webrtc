@@ -26,13 +26,12 @@ using namespace v8;
 class MessageEvent : public EmitterEvent {
  public:
   explicit MessageEvent(EventEmitter *eventEmitter);
-  
+
   void Handle();
   void SetData(const std::string& data);
- 
+
  private:
   std::string _data;
- 
 };
 
 #endif  // EVENT_MESSAGEEVENT_H_

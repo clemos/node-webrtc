@@ -26,14 +26,13 @@ using namespace v8;
 
 class DataChannelEvent : public EmitterEvent {
  public:
-  explicit DataChannelEvent(EventEmitter *eventEmitter, 
+  explicit DataChannelEvent(EventEmitter *eventEmitter,
     const rtc::scoped_refptr<webrtc::DataChannelInterface>& datachannel);
-  
+
   void Handle();
-  
+
  private:
   const rtc::scoped_refptr<webrtc::DataChannelInterface> _channel;
-
 };
 
 #endif  // EVENT_DATACHANNELEVENT_H_

@@ -24,15 +24,14 @@ using namespace v8;
 
 class EmitterEvent : public Event {
  public:
-  explicit EmitterEvent( EventEmitter *eventEmitter );
-  
+  explicit EmitterEvent(EventEmitter *eventEmitter);
+
   void Handle();
   void SetType(const std::string& type);
-  
+
  protected:
   EventEmitter *_eventEmitter;
   std::string _type;
-
 };
 
 #endif  // EVENT_EMITTEREVENT_H_

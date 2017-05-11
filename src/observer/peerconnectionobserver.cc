@@ -34,7 +34,6 @@ PeerConnectionObserver::~PeerConnectionObserver() {
 
 void PeerConnectionObserver::OnSignalingChange(
   webrtc::PeerConnectionInterface::SignalingState new_state) {
-  //std::cout << "OnSignalingChange" << std::endl;
   EmitterEvent* _event = new EmitterEvent(_eventEmitter);
   _event->SetType(kSignalingStateChange);
   Globals::GetEventQueue()->PushEvent(_event);
@@ -52,14 +51,12 @@ void PeerConnectionObserver::OnRemoveStream(
 
 void PeerConnectionObserver::OnDataChannel(
     rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) {
-  //std::cout << "OnDataChannel" << std::endl;
   DataChannelEvent* _event = new DataChannelEvent(_eventEmitter, data_channel);
   _event->SetType(kDataChannel);
   Globals::GetEventQueue()->PushEvent(_event);
 }
 
 void PeerConnectionObserver::OnRenegotiationNeeded() {
-  std::cout << "OnRenegotiationNeeded" << std::endl;
   EmitterEvent* _event = new EmitterEvent(_eventEmitter);
   _event->SetType(kNegociationNeeded);
   Globals::GetEventQueue()->PushEvent(_event);
@@ -67,7 +64,6 @@ void PeerConnectionObserver::OnRenegotiationNeeded() {
 
 void PeerConnectionObserver::OnIceConnectionChange(
     webrtc::PeerConnectionInterface::IceConnectionState new_state) {
-  //std::cout << "OnIceConnectionChange" << std::endl;
   EmitterEvent* _event = new EmitterEvent(_eventEmitter);
   _event->SetType(kIceConnectionStateChange);
   Globals::GetEventQueue()->PushEvent(_event);
@@ -75,7 +71,6 @@ void PeerConnectionObserver::OnIceConnectionChange(
 
 void PeerConnectionObserver::OnIceGatheringChange(
     webrtc::PeerConnectionInterface::IceGatheringState new_state) {
-  //std::cout << "OnAddStream" << std::endl;
   switch (new_state) {
     case webrtc::PeerConnectionInterface::kIceGatheringNew:
       break;
@@ -85,8 +80,10 @@ void PeerConnectionObserver::OnIceGatheringChange(
 
     case webrtc::PeerConnectionInterface::kIceGatheringComplete:
       {
-        // emit null ice candidate as per https://www.w3.org/TR/webrtc/#dom-rtcpeerconnectioniceevent
-        PeerConnectionIceEvent* _iceEvent = new PeerConnectionIceEvent(_eventEmitter);
+        // emit null ice candidate
+        // as per https://www.w3.org/TR/webrtc/#dom-rtcpeerconnectioniceevent
+        PeerConnectionIceEvent* _iceEvent
+          = new PeerConnectionIceEvent(_eventEmitter);
         _iceEvent->SetType(kIceCandidate);
         Globals::GetEventQueue()->PushEvent(_iceEvent);
         break;
@@ -103,12 +100,10 @@ void PeerConnectionObserver::OnIceGatheringChange(
 
 void PeerConnectionObserver::OnIceCandidate(
     const webrtc::IceCandidateInterface *candidate) {
-  //std::cout << "OnIceCandidate" << std::endl;
   PeerConnectionIceEvent* _event = new PeerConnectionIceEvent(_eventEmitter);
   _event->SetType(kIceCandidate);
   _event->SetCandidate(candidate);
   Globals::GetEventQueue()->PushEvent(_event);
-
 }
 
 void PeerConnectionObserver::OnIceCandidatesRemoved(

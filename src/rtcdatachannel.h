@@ -44,7 +44,7 @@ class RTCDataChannel : public EventEmitter {
   }
 
   const rtc::scoped_refptr<webrtc::DataChannelInterface> _datachannel;
-  
+
  private:
   explicit RTCDataChannel(
     const rtc::scoped_refptr<webrtc::DataChannelInterface>& datachannel);
@@ -54,7 +54,6 @@ class RTCDataChannel : public EventEmitter {
 
  protected:
   rtc::scoped_refptr<DataChannelObserver> _datachannelObserver;
-
 };
 
 #endif  // RTCDATACHANNEL_H_

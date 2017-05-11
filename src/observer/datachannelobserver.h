@@ -35,7 +35,7 @@ class DataChannelObserver : public rtc::RefCountInterface,
 
   //  A data buffer was successfully received.
   void OnMessage(const webrtc::DataBuffer& buffer);
-  
+
   // The data channel's buffered_amount has changed.
   void OnBufferedAmountChange(uint64_t previous_amount);
 

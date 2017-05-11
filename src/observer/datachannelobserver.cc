@@ -31,24 +31,21 @@ DataChannelObserver::~DataChannelObserver() {
 
 void DataChannelObserver::OnStateChange() {
   std::cout << "DataChannel OnStateChange" << std::endl;
-  // TODO
 }
 
-void DataChannelObserver::OnMessage(const webrtc::DataBuffer& buffer){
+void DataChannelObserver::OnMessage(const webrtc::DataBuffer& buffer) {
   MessageEvent* _event = new MessageEvent(_eventEmitter);
   _event->SetType(kMessage);
 
   rtc::CopyOnWriteBuffer data = buffer.data;
-  std::string _data((char *)data.data(), data.size());;
+  std::string _data(reinterpret_cast<char *>(data.data()), data.size());;
 
   _event->SetData(_data);
   Globals::GetEventQueue()->PushEvent(_event);
-  // TODO
 }
 
-void DataChannelObserver::OnBufferedAmountChange(uint64_t previous_amount){
+void DataChannelObserver::OnBufferedAmountChange(uint64_t previous_amount) {
   std::cout << "DataChannel OnBufferedAmountChange" << std::endl;
-  // TODO
 }
 
 DataChannelObserver *DataChannelObserver::Create() {

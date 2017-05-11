@@ -23,8 +23,8 @@ using namespace v8;
 
 static const char kChannel[] = "channel";
 
-DataChannelEvent::DataChannelEvent(EventEmitter *eventEmitter, 
-  const rtc::scoped_refptr<webrtc::DataChannelInterface> &datachannel) 
+DataChannelEvent::DataChannelEvent(EventEmitter *eventEmitter,
+  const rtc::scoped_refptr<webrtc::DataChannelInterface> &datachannel)
   : EmitterEvent(eventEmitter), _channel(datachannel) {
 }
 
@@ -36,6 +36,6 @@ void DataChannelEvent::Handle() {
   // FIXME: move to observer ?
   Nan::Persistent<Object> channel(RTCDataChannel::Create(_channel));
   e->Set(LOCAL_STRING(kChannel), Nan::New(channel));
-  
-  _eventEmitter->EmitData(LOCAL_STRING(_type),e);
+
+  _eventEmitter->EmitData(LOCAL_STRING(_type), e);
 }

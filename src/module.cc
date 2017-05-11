@@ -30,7 +30,7 @@ NAN_MODULE_INIT(Init) {
   }
 
   rtc::LogMessage::LogToDebug(rtc::LS_NONE);
-  //rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
+  // rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
 
   RTCCertificate::Init(target);
   RTCIceCandidate::Init(target);

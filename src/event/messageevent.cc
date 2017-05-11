@@ -22,9 +22,8 @@ using namespace v8;
 
 static const char kData[] = "data";
 
-MessageEvent::MessageEvent(EventEmitter *eventEmitter) 
-  : EmitterEvent(eventEmitter){
-}
+MessageEvent::MessageEvent(EventEmitter *eventEmitter)
+  : EmitterEvent(eventEmitter) {}
 
 void MessageEvent::Handle() {
   Nan::HandleScope scope;
@@ -32,7 +31,7 @@ void MessageEvent::Handle() {
   // FIXME: make proper MessageData ?
   Local<Object> e = Nan::New<Object>();
   e->Set(LOCAL_STRING(kData), LOCAL_STRING(_data));
-  _eventEmitter->EmitData(LOCAL_STRING(_type),e);
+  _eventEmitter->EmitData(LOCAL_STRING(_type), e);
 }
 
 void MessageEvent::SetData(const std::string& data) {

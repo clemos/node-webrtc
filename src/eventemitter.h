@@ -24,13 +24,12 @@ using namespace v8;
 
 class EventEmitter : public Nan::ObjectWrap {
  public:
-  explicit EventEmitter();
+  EventEmitter();
   Persistent<Function>* _emit = nullptr;
 
-  void Wrap( Local<Object> obj );
-  void Emit( Local<String> type );
-  void EmitData( Local<String> type, Local<Value> data );
-
+  void Wrap(Local<Object> obj);
+  void Emit(Local<String> type);
+  void EmitData(Local<String> type, Local<Value> data);
 };
 
 #endif  // EVENTEMITTER_H_

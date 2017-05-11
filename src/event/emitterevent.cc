@@ -19,16 +19,14 @@
 
 using namespace v8;
 
-EmitterEvent::EmitterEvent( EventEmitter *eventEmitter ) : 
-  _eventEmitter(eventEmitter) {
-}
+EmitterEvent::EmitterEvent(EventEmitter *eventEmitter)
+  : _eventEmitter(eventEmitter) {}
 
 void EmitterEvent::Handle() {
   Nan::HandleScope scope;
   _eventEmitter->Emit(LOCAL_STRING(_type));
 }
 
-void EmitterEvent::SetType(
-    const std::string &type) {
+void EmitterEvent::SetType(const std::string &type) {
   _type = type;
 }

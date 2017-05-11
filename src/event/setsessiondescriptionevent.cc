@@ -57,7 +57,7 @@ void SetSessionDescriptionEvent::Handle() {
   if (_succeeded && _successCallback) {
     Local<Function> successCallback = Nan::New(*_successCallback);
     Nan::Callback cb(successCallback);
-    
+
     const int argc = 0;
     Local<Value> argv[0] = {};
 

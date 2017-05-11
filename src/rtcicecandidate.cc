@@ -23,8 +23,6 @@
 #include "common.h"
 #include "rtcicecandidate.h"
 
-//Nan::Persistent<FunctionTemplate> RTCIceCandidate::constructor;
-
 static const char sRTCIceCandidate[] = "RTCIceCandidate";
 
 static const char kCandidate[] = "candidate";
@@ -73,22 +71,27 @@ NAN_MODULE_INIT(RTCIceCandidate::Init) {
            ctor->GetFunction());
 }
 
-RTCIceCandidate::RTCIceCandidate(const webrtc::IceCandidateInterface *iceCandidate)
-    : _iceCandidate(iceCandidate) {
+RTCIceCandidate::RTCIceCandidate(
+  const webrtc::IceCandidateInterface *iceCandidate)
+  : _iceCandidate(iceCandidate) {
 }
 
 RTCIceCandidate::~RTCIceCandidate() {
   delete _iceCandidate;
 }
 
-Local<Object> RTCIceCandidate::Create(std::string sdpMid, int sdpMLineIndex, std::string candidate) {
+Local<Object> RTCIceCandidate::Create(
+  std::string sdpMid, int sdpMLineIndex, std::string candidate) {
   Local<Function> cons = Nan::New(RTCIceCandidate::constructor());
-  
+
   Local<Object> candidateInitDict = Nan::New<Object>();
-  candidateInitDict->Set(LOCAL_STRING(kSdpMid), LOCAL_STRING(sdpMid));
-  candidateInitDict->Set(LOCAL_STRING(kSdpMLineIndex), Nan::New<Integer>(sdpMLineIndex));
-  candidateInitDict->Set(LOCAL_STRING(kCandidate), LOCAL_STRING(candidate));
-  
+  candidateInitDict->Set(LOCAL_STRING(kSdpMid),
+    LOCAL_STRING(sdpMid));
+  candidateInitDict->Set(LOCAL_STRING(kSdpMLineIndex),
+    Nan::New<Integer>(sdpMLineIndex));
+  candidateInitDict->Set(LOCAL_STRING(kCandidate),
+    LOCAL_STRING(candidate));
+
   const int argc = 1;
   Local<Value> argv[1] = { candidateInitDict };
   Local<Object> instance = Nan::NewInstance(cons, argc, argv).ToLocalChecked();
