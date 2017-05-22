@@ -26,6 +26,7 @@ static const char kLabel[] = "label";
 static const char kOrdered[] = "ordered";
 static const char kReadyState[] = "readyState";
 static const char kSend[] = "send";
+static const char kClose[] = "close";
 
 NAN_MODULE_INIT(RTCDataChannel::Init) {
   Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(New);
@@ -38,6 +39,7 @@ NAN_MODULE_INIT(RTCDataChannel::Init) {
   Nan::SetAccessor(prototype, LOCAL_STRING(kReadyState), GetReadyState);
 
   Nan::SetMethod(prototype, kSend, Send);
+  Nan::SetMethod(prototype, kClose, Close);
 
   constructor().Reset(Nan::GetFunction(ctor).ToLocalChecked());
 
@@ -98,6 +100,15 @@ NAN_METHOD(RTCDataChannel::Send) {
 
   webrtc::DataBuffer _buffer(*data);
   object->_datachannel->Send(_buffer);
+
+  info.GetReturnValue().Set(Nan::Null());
+}
+
+NAN_METHOD(RTCDataChannel::Close) {
+  METHOD_HEADER("RTCDataChannel", "close");
+  UNWRAP_OBJECT(RTCDataChannel, object);
+
+  object->_datachannel->Close();
 
   info.GetReturnValue().Set(Nan::Null());
 }

@@ -34,6 +34,7 @@ class RTCDataChannel : public EventEmitter {
   static NAN_GETTER(GetReadyState);
 
   static NAN_METHOD(Send);
+  static NAN_METHOD(Close);
 
   static Local<Object> Create(
     const rtc::scoped_refptr<webrtc::DataChannelInterface>& datachannel);
