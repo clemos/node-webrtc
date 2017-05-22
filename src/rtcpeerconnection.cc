@@ -88,7 +88,10 @@ static const char eUnsupported[] = "The 1st argument provided is an "
     "AlgorithmIdentifier with a supported algorithm name, but the parameters "
     "are not supported.";
 
-static const char eFailure[] = "Failed to generate the certificate.";
+static const char eGenerateCertificateFailure[] = 
+    "Failed to generate the certificate.";
+static const char eConstructorFailure[] =
+    "Failed to construct 'RTCPeerConnection'";
 
 NAN_MODULE_INIT(RTCPeerConnection::Init) {
   Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(New);
@@ -131,8 +134,7 @@ NAN_MODULE_INIT(RTCPeerConnection::Init) {
 }
 
 RTCPeerConnection::RTCPeerConnection(
-    const webrtc::PeerConnectionInterface::RTCConfiguration& config,
-    const webrtc::MediaConstraintsInterface& constraints) {
+    const webrtc::PeerConnectionInterface::RTCConfiguration& config) {
 
   _peerConnectionFactory = webrtc::CreatePeerConnectionFactory(
       Globals::GetSignalingThread(), Globals::GetWorkerThread(),
@@ -140,7 +142,7 @@ RTCPeerConnection::RTCPeerConnection(
 
   _peerConnectionObserver = PeerConnectionObserver::Create();
   _peerConnection = _peerConnectionFactory->CreatePeerConnection(
-          config, &constraints, NULL, NULL, _peerConnectionObserver);
+          config, NULL, NULL, _peerConnectionObserver);
 }
 
 RTCPeerConnection::~RTCPeerConnection() {
@@ -158,44 +160,53 @@ NAN_METHOD(RTCPeerConnection::New) {
     ASSERT_OBJECT_ARGUMENT(0, config);
 
     DECLARE_OBJECT_PROPERTY(config, kIceServers, iceServersVal);
-    ASSERT_PROPERTY_ARRAY(kIceServers, iceServersVal, iceServers);
 
-    for (unsigned int i = 0; i < iceServers->Length(); i = i + 1) {
-      Local<Value> iceServerVal = iceServers->Get(i);
-      ASSERT_PROPERTY_OBJECT(kIceServers, iceServerVal, iceServer);
+    if (!iceServersVal->IsNull() && !iceServersVal->IsUndefined()) {
+      ASSERT_PROPERTY_ARRAY(kIceServers, iceServersVal, iceServers);
 
-      webrtc::PeerConnectionInterface::IceServer server;
+      for (unsigned int i = 0; i < iceServers->Length(); i = i + 1) {
+        Local<Value> iceServerVal = iceServers->Get(i);
+        ASSERT_PROPERTY_OBJECT(kIceServers, iceServerVal, iceServer);
 
-      DECLARE_OBJECT_PROPERTY(iceServer, kIceServerUrls, iceServerUrlsVal);
-      ASSERT_PROPERTY_ARRAY(kIceServerUrls, iceServerUrlsVal, iceServerUrls);
+        webrtc::PeerConnectionInterface::IceServer server;
 
-      for (unsigned int j = 0; j < iceServerUrls->Length(); j = j + 1) {
-        Local<Value> iceServerUrlVal = iceServerUrls->Get(j);
-        ASSERT_PROPERTY_STRING(kIceServerUrls, iceServerUrlVal, iceServerUrl);
-        server.urls.push_back(*iceServerUrl);
+        DECLARE_OBJECT_PROPERTY(iceServer, kIceServerUrls, iceServerUrlsVal);
+        ASSERT_PROPERTY_ARRAY(kIceServerUrls, iceServerUrlsVal, iceServerUrls);
+
+        for (unsigned int j = 0; j < iceServerUrls->Length(); j = j + 1) {
+          Local<Value> iceServerUrlVal = iceServerUrls->Get(j);
+          // FIXME: validate URL
+          ASSERT_PROPERTY_STRING(kIceServerUrls, iceServerUrlVal, iceServerUrl);
+          server.urls.push_back(*iceServerUrl);
+          // FIXME: add username / password for TURN servers
+        }
+        _config.servers.push_back(server);
       }
-      _config.servers.push_back(server);
     }
 
     DECLARE_OBJECT_PROPERTY(config, kCertificates, certificatesVal);
-    ASSERT_PROPERTY_ARRAY(kCertificates, certificatesVal, certificates);
 
-    for (unsigned int i = 0; i < certificates->Length(); i = i + 1) {
-      Local<Value> certificateVal = certificates->Get(i);
-      ASSERT_PROPERTY_OBJECT(kCertificates, certificateVal, certificate);
-      // FIXME: validate it's a RTCCertificate object
-      RTCCertificate* _certificate
-        = Nan::ObjectWrap::Unwrap<RTCCertificate>(certificate);
+    if (!certificatesVal->IsNull() && !certificatesVal->IsUndefined()) {
+      ASSERT_PROPERTY_ARRAY(kCertificates, certificatesVal, certificates);
 
-      _config.certificates.push_back(_certificate->_certificate);
+      for (unsigned int i = 0; i < certificates->Length(); i = i + 1) {
+        Local<Value> certificateVal = certificates->Get(i);
+        ASSERT_PROPERTY_OBJECT(kCertificates, certificateVal, certificate);
+        // FIXME: validate it's a RTCCertificate object
+        RTCCertificate* _certificate
+          = Nan::ObjectWrap::Unwrap<RTCCertificate>(certificate);
+
+        _config.certificates.push_back(_certificate->_certificate);
+      }
     }
   }
 
-  constraints.AddOptional(webrtc::MediaConstraintsInterface::kEnableDtlsSrtp,
-                          "true");
+  RTCPeerConnection *rtcPeerConnection = new RTCPeerConnection(_config);
 
-  RTCPeerConnection *rtcPeerConnection = new RTCPeerConnection(_config,
-                                                               constraints);
+  if (!rtcPeerConnection->_peerConnection) {
+    return Nan::ThrowError(eConstructorFailure);
+  }
+
   rtcPeerConnection->Wrap(info.This());
 
   rtcPeerConnection->_peerConnectionObserver->SetEventEmitter(
@@ -519,7 +530,7 @@ void RTCPeerConnection::GenerateCertificateWorker::WorkComplete() {
   if (!_certificate.get()) {
     std::stringstream errorStream;
 
-    errorStream << eFailure;
+    errorStream << eGenerateCertificateFailure;
     resolver->Reject(Nan::TypeError(errorStream.str().c_str()));
   } else {
     resolver->Resolve(RTCCertificate::Create(_certificate));

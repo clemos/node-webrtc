@@ -31,8 +31,7 @@ class RTCPeerConnection : public EventEmitter {
 
  private:
   explicit RTCPeerConnection(
-      const webrtc::PeerConnectionInterface::RTCConfiguration& config,
-      const webrtc::MediaConstraintsInterface& constraints);
+      const webrtc::PeerConnectionInterface::RTCConfiguration& config);
   ~RTCPeerConnection();
 
   static NAN_METHOD(New);
