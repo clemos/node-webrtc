@@ -8,6 +8,7 @@
                 'src/event/emitterevent.cc',
                 'src/event/peerconnectioniceevent.cc',
                 'src/event/datachannelevent.cc',
+                'src/event/mediastreamevent.cc',
                 'src/event/messageevent.cc',
                 'src/event/eventqueue.cc',
                 'src/globals.cc',
@@ -22,6 +23,7 @@
                 'src/rtcpeerconnection.cc',
                 'src/rtcsessiondescription.cc',
                 'src/rtcdatachannel.cc',
+                'src/rtcmediastream.cc',
             ],
             'include_dirs' : [
                 'build/include',

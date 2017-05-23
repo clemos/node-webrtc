@@ -24,6 +24,9 @@ static const char kIceGatheringStateChange[] = "icegatheringstatechange";
 static const char kNegociationNeeded[] = "negotiationneeded";
 static const char kDataChannel[] = "datachannel";
 static const char kIceCandidate[] = "icecandidate";
+// FIXME: not part of W3C spec ?
+static const char kAddStream[] = "addstream";
+static const char kRemoveStream[] = "removestream";
 
 PeerConnectionObserver::PeerConnectionObserver() {
 }
@@ -42,11 +45,17 @@ void PeerConnectionObserver::OnSignalingChange(
 void PeerConnectionObserver::OnAddStream(
     rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) {
   std::cout << "OnAddStream" << std::endl;
+  MediaStreamEvent* _event = new MediaStreamEvent(_eventEmitter, stream);
+  _event->SetType(kAddStream);
+  Globals::GetEventQueue()->PushEvent(_event);
 }
 
 void PeerConnectionObserver::OnRemoveStream(
     rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) {
   std::cout << "OnRemoveStream" << std::endl;
+  MediaStreamEvent* _event = new MediaStreamEvent(_eventEmitter, stream);
+  _event->SetType(kRemoveStream);
+  Globals::GetEventQueue()->PushEvent(_event);
 }
 
 void PeerConnectionObserver::OnDataChannel(

@@ -21,6 +21,7 @@
 #include "event/emitterevent.h"
 #include "event/peerconnectioniceevent.h"
 #include "event/datachannelevent.h"
+#include "event/mediastreamevent.h"
 
 using namespace v8;
 
