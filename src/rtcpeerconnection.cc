@@ -27,6 +27,7 @@
 #include "rtcpeerconnection.h"
 #include "rtcsessiondescription.h"
 #include "rtcdatachannel.h"
+#include "rtcmediastream.h"
 
 Nan::Persistent<FunctionTemplate> RTCPeerConnection::constructor;
 
@@ -37,6 +38,7 @@ static const char kCreateAnswer[] = "createAnswer";
 static const char kSetLocalDescription[] = "setLocalDescription";
 static const char kSetRemoteDescription[] = "setRemoteDescription";
 static const char kCreateDataChannel[] = "createDataChannel";
+static const char kAddStream[] = "addStream";
 static const char kGenerateCertificate[] = "generateCertificate";
 
 static const char kIceServers[] = "iceServers";
@@ -106,6 +108,7 @@ NAN_MODULE_INIT(RTCPeerConnection::Init) {
   Nan::SetMethod(prototype, kSetLocalDescription, SetLocalDescription);
   Nan::SetMethod(prototype, kSetRemoteDescription, SetRemoteDescription);
   Nan::SetMethod(prototype, kCreateDataChannel, CreateDataChannel);
+  Nan::SetMethod(prototype, kAddStream, AddStream);
 
   Local<ObjectTemplate> tpl = ctor->InstanceTemplate();
   Nan::SetAccessor(tpl, LOCAL_STRING(kConnectionState),
@@ -348,6 +351,27 @@ NAN_METHOD(RTCPeerConnection::CreateDataChannel) {
   Local<Object> datachannel = RTCDataChannel::Create(_channel);
 
   info.GetReturnValue().Set(datachannel);
+}
+
+NAN_METHOD(RTCPeerConnection::AddStream) {
+  METHOD_HEADER("RTCPeerConnection", "addStream");
+  UNWRAP_OBJECT(RTCPeerConnection, object);
+
+  ASSERT_OBJECT_ARGUMENT(0, stream);
+
+  // FIXME: validate...
+  RTCMediaStream* _stream = Nan::ObjectWrap::Unwrap<RTCMediaStream>(
+    stream);
+
+  std::cout << "ADDING STREAM" << std::endl;
+  bool ok = object->_peerConnection->AddStream(_stream->_mediastream);
+  if(ok) {
+    std::cout << "stream added" << std::endl;
+  }else{
+    std::cout << "stream NOT added" << std::endl;
+  }
+
+  info.GetReturnValue().Set(Nan::Null());
 }
 
 NAN_GETTER(RTCPeerConnection::GetConnectionState) {

@@ -26,7 +26,7 @@ NAN_MODULE_INIT(RTCMediaStream::Init) {
   ctor->SetClassName(LOCAL_STRING(sRTCMediaStream));
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
 
-  Local<ObjectTemplate> prototype = ctor->PrototypeTemplate();
+  // Local<ObjectTemplate> prototype = ctor->PrototypeTemplate();
   // Nan::SetAccessor(prototype, LOCAL_STRING(kLabel), GetLabel);
   // Nan::SetAccessor(prototype, LOCAL_STRING(kOrdered), GetOrdered);
   // Nan::SetAccessor(prototype, LOCAL_STRING(kReadyState), GetReadyState);
@@ -54,6 +54,7 @@ RTCMediaStream::~RTCMediaStream() {
 
 Local<Object> RTCMediaStream::Create(
   const rtc::scoped_refptr<webrtc::MediaStreamInterface> &mediastream) {
+  
   Local<Function> cons = Nan::New(RTCMediaStream::constructor());
   Local<Object> instance = Nan::NewInstance(cons, 0, NULL).ToLocalChecked();
 

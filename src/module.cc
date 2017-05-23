@@ -22,6 +22,7 @@
 #include "rtcpeerconnection.h"
 #include "rtcsessiondescription.h"
 #include "rtcdatachannel.h"
+#include "rtcmediastream.h"
 #include <webrtc/base/logging.h>
 
 NAN_MODULE_INIT(Init) {
@@ -37,6 +38,7 @@ NAN_MODULE_INIT(Init) {
   RTCPeerConnection::Init(target);
   RTCSessionDescription::Init(target);
   RTCDataChannel::Init(target);
+  RTCMediaStream::Init(target);
 
   node::AtExit(Globals::Cleanup);
 }
